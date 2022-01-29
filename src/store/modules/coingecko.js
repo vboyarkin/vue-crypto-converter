@@ -4,7 +4,7 @@ export default {
   state: {
     chart: [],
     currencies,
-    currencyPair: [currencies.slice(0, 2)],
+    currencyPair: currencies.slice(0, 2),
   },
   getters: {
     chartData(state) {
