@@ -31,6 +31,20 @@ export default {
         },
         tooltips: {
           mode: "x-axis",
+          callbacks: {
+            label: (tooltipItem, data) => {
+              var label = data.datasets[tooltipItem.datasetIndex].label || "";
+
+              if (label) label += ": ";
+
+              const price = tooltipItem.yLabel;
+              if (price > 10) label += Math.round(price * 100) / 100;
+              else if (price > 1) label += Math.round(price * 10000) / 10000;
+              else label += Math.round(price * 10000000) / 10000000;
+
+              return label + " " + this.counterCurrency.label;
+            },
+          },
         },
         maintainAspectRatio: false,
         legend: {
@@ -57,7 +71,7 @@ export default {
         labels: X,
         datasets: [
           {
-            label: "x",
+            label: "Цена",
             lineTension: 0.15,
             data: Y,
             backgroundColor: ["rgba(255, 99, 132, 0.2)"],
@@ -103,5 +117,3 @@ export default {
   },
 };
 </script>
-
-<style></style>
