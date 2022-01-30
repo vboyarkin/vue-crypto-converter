@@ -4,7 +4,8 @@ export default {
   state: {
     chart: [],
     currencies,
-    currencyPair: currencies.slice(0, 2),
+    baseCurrency: currencies[0],
+    counterCurrency: currencies[1],
   },
   getters: {
     chartData(state) {
@@ -18,8 +19,20 @@ export default {
 
       return res;
     },
-    currencyPair(state) {
-      return state.currencyPair;
+    currencies(state) {
+      return state.currencies;
+    },
+    baseCurrency(state) {
+      return state.baseCurrency;
+    },
+    counterCurrency(state) {
+      return state.counterCurrency;
+    },
+    currencyOptions(state) {
+      return [
+        [...state.currencies.filter(c => c.apiId)],
+        [...state.currencies.filter(c => c.vsCurrencyId)],
+      ];
     },
   },
   actions: {
@@ -41,8 +54,12 @@ export default {
         console.error(err);
       }
     },
-    async selectCurrencyPair({ commit, dispatch }, pair) {
-      commit("updateCurrencyPair", pair);
+    async selectBaseCurrency({ commit, dispatch }, currency) {
+      commit("updateBaseCurrency", currency);
+      dispatch("fetchChart");
+    },
+    async selectCounterCurrency({ commit, dispatch }, currency) {
+      commit("updateCounterCurrency", currency);
       dispatch("fetchChart");
     },
   },
@@ -50,8 +67,11 @@ export default {
     updateChart(state, chart) {
       state.chart = chart;
     },
-    updateCurrencyPair(state, pair) {
-      state.currencyPair = pair;
+    updateBaseCurrency(state, currency) {
+      state.baseCurrency = currency;
+    },
+    updateCounterCurrency(state, currency) {
+      state.counterCurrency = currency;
     },
   },
 };

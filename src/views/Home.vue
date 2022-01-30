@@ -1,23 +1,50 @@
 <template>
   <div class="home">
+    <VueSelect
+      @input="onBaseCurrencyChange"
+      :options="currencyOptions[0]"
+      :value="baseCurrency"
+    />
+    <VueSelect
+      @input="onCounterCurrencyChange"
+      :options="currencyOptions[1]"
+      :value="counterCurrency"
+    />
     <span>{{ currencyPairSpan }}</span>
     <Chart class="chart" />
   </div>
 </template>
 
 <script>
+import { mapActions, mapGetters } from "vuex";
+import VueSelect from "vue-select";
+import "vue-select/dist/vue-select.css";
 import Chart from "@/components/Chart.vue";
 import { mapGetters } from "vuex";
 export default {
   name: "Home",
-  components: { Chart },
+  components: { Chart, VueSelect },
   computed: {
-    ...mapGetters(["currencyPair"]),
+    ...mapGetters(["baseCurrency", "counterCurrency", "currencyOptions"]),
     currencyPairSpan() {
-      if (!this.currencyPair) return "";
-
-      return this.currencyPair.map((p) => p[0]).join("/");
+      return this.baseCurrency.label + "/" + this.counterCurrency.label;
     },
+  },
+  methods: {
+    ...mapActions([
+      "selectBaseCurrency",
+      "selectCounterCurrency",
+      "fetchChart",
+    ]),
+    onBaseCurrencyChange(currency) {
+      this.selectBaseCurrency(currency);
+    },
+    onCounterCurrencyChange(currency) {
+      this.selectCounterCurrency(currency);
+    },
+  },
+  async mounted() {
+    await this.fetchChart();
   },
 };
 </script>
