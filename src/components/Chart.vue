@@ -1,25 +1,12 @@
 <script>
-import { Line } from "vue-chartjs";
+import { Line, mixins } from "vue-chartjs";
 import { mapActions, mapGetters } from "vuex";
 
 export default {
   extends: Line,
+  mixins: [mixins.reactiveData],
   data() {
     return {
-      data: {
-        labels: [],
-        datasets: [
-          {
-            label: "x",
-            lineTension: 0.15,
-            data: [],
-            backgroundColor: ["rgba(255, 99, 132, 0.2)"],
-            borderColor: ["rgba(255, 99, 132, 1)"],
-            borderWidth: 1,
-            pointRadius: 0,
-          },
-        ],
-      },
       options: {
         type: "line",
         scales: {
@@ -37,7 +24,7 @@ export default {
           yAxes: [
             {
               ticks: {
-                callback: (value) => value + " " + this.currencyPair[1][0],
+                callback: (value) => value + " " + this.counterCurrency.label,
               },
             },
           ],
@@ -53,19 +40,36 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["chartData", "currencyPair"]),
+    ...mapGetters(["counterCurrency", "getChartData"]),
   },
   methods: {
     ...mapActions(["fetchChart"]),
   },
+  watch: {
+    getChartData() {
+      let data = this.getChartData;
+
+      if (data === null) return null;
+
+      const { X, Y } = data;
+
+      this.chartData = {
+        labels: X,
+        datasets: [
+          {
+            label: "x",
+            lineTension: 0.15,
+            data: Y,
+            backgroundColor: ["rgba(255, 99, 132, 0.2)"],
+            borderColor: ["rgba(255, 99, 132, 1)"],
+            borderWidth: 1,
+            pointRadius: 0,
+          },
+        ],
+      };
+    },
+  },
   async mounted() {
-    await this.fetchChart();
-
-    let { X, Y } = this.chartData;
-
-    this.data.labels = X;
-    this.data.datasets[0].data = Y;
-
     this.addPlugin({
       id: "hover-line",
       afterDatasetsDraw: function (chart) {
@@ -95,7 +99,7 @@ export default {
       },
     });
 
-    this.renderChart(this.data, this.options);
+    this.renderChart(this.chartData, this.options);
   },
 };
 </script>

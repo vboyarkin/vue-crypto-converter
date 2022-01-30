@@ -20,7 +20,6 @@ import { mapActions, mapGetters } from "vuex";
 import VueSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
 import Chart from "@/components/Chart.vue";
-import { mapGetters } from "vuex";
 export default {
   name: "Home",
   components: { Chart, VueSelect },
@@ -53,4 +52,9 @@ export default {
 .chart
   width: 70vw
   height: 300px
+
+// .error-container
+//   height: 300px
+//   display: flex
+//   align-items: center
 </style>

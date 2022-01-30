@@ -8,7 +8,16 @@ export default {
     counterCurrency: currencies[1],
   },
   getters: {
-    chartData(state) {
+    getChartData(state) {
+      if (!state.chart) {
+        console.error("state.chart hasn't been loaded!");
+        return null;
+      }
+      if (!state.chart.prices) {
+        console.error("state.chart.prices hasn't been loaded!");
+        return null;
+      }
+
       let res = { X: [], Y: [] };
 
       for (let i = 0; i < state.chart.prices.length; i++) {
@@ -37,16 +46,11 @@ export default {
   },
   actions: {
     async fetchChart({ commit, state }) {
-      let [c1, c2] = state.currencies;
-      const url = `https://api.coingecko.com/api/v3/coins/${c1[1]}/market_chart?vs_currency=${c2[1]}&days=14`;
+      const url = `https://api.coingecko.com/api/v3/coins/${state.baseCurrency.apiId}/market_chart?vs_currency=${state.counterCurrency.vsCurrencyId}&days=14`;
 
       try {
         let res = await fetch(url);
         let json = await res.json();
-        json.prices = json.prices.map(p => [
-          p[0],
-          Math.round(100 * p[1]) / 100,
-        ]);
 
         commit("updateChart", json);
       } catch (err) {
