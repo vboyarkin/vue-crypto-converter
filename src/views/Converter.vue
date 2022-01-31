@@ -11,6 +11,9 @@
           :value="baseCurrency"
         />
       </div>
+
+      <div class="fill"></div>
+
       <div class="input-wrap">
         <input type="number" v-model="counterVal" />
         <VueSelect
@@ -101,11 +104,12 @@ export default {
 .inputs
   display: flex
   justify-content: space-between
-  width: 650px
+  flex-wrap: wrap
   margin: 0px 0px 16px 0px
 
 .input-wrap
   display: flex
+  margin-bottom: 4px
   input[type="number"]
     width: 140px
     padding: 4px 2px 4px 9.5px
@@ -124,12 +128,13 @@ input::-webkit-inner-spin-button
   -webkit-appearance: none
   margin: 0
 
-.chart
-  width: 70vw
-  height: 300px
+div.fill
+  width: 15px
 
-// .error-container
-//   height: 300px
-//   display: flex
-//   align-items: center
+.chart
+  min-width: 270px
+  height: 380px
+  width: 100vw
+  @media screen and (min-width: 700px)
+    width: 70vw
 </style>
