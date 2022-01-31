@@ -26,7 +26,7 @@
       </div>
     </div>
     <span>{{ currencyPairSpan }}</span>
-    <Chart class="chart" />
+    <Chart class="chart" :chartDataProp="getChartData" />
   </div>
 </template>
 
@@ -45,6 +45,7 @@ export default {
       "counterCurrency",
       "counterValue",
       "currencyOptions",
+      "getChartData",
     ]),
     currencyPairSpan() {
       return this.baseCurrency.label + "/" + this.counterCurrency.label;
