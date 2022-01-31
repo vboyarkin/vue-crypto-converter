@@ -1,11 +1,16 @@
 import currencies from "@/assets/currencies";
 
+const chartUrl = (apiId, vsCurrencyId) =>
+  `https://api.coingecko.com/api/v3/coins/${apiId}/market_chart?vs_currency=${vsCurrencyId}&days=14`;
+
 export default {
   state: {
     chart: [],
     currencies,
     baseCurrency: currencies[0],
     counterCurrency: currencies[1],
+    baseValue: 1,
+    exchangeRate: 1,
   },
   getters: {
     getChartData(state) {
@@ -43,28 +48,63 @@ export default {
         [...state.currencies.filter(c => c.vsCurrencyId)],
       ];
     },
+    exchangeRate(state) {
+      return state.exchangeRate;
+    },
+    baseValue(state) {
+      return Math.round(state.baseValue * 10000000) / 10000000;
+    },
+    counterValue(state, getters) {
+      return (
+        Math.round(state.baseValue * getters.exchangeRate * 10000000) / 10000000
+      );
+    },
   },
   actions: {
-    async fetchChart({ commit, state }) {
-      const url = `https://api.coingecko.com/api/v3/coins/${state.baseCurrency.apiId}/market_chart?vs_currency=${state.counterCurrency.vsCurrencyId}&days=14`;
-
+    async fetchChart({ commit, getters: { baseCurrency, counterCurrency } }) {
       try {
-        let res = await fetch(url);
-        let json = await res.json();
+        const res = await fetch(
+          chartUrl(baseCurrency.apiId, counterCurrency.vsCurrencyId)
+        );
+        const chart = await res.json();
 
-        commit("updateChart", json);
+        commit("updateChart", chart);
+
+        const prices = chart.prices;
+        commit("updateExchangeRate", prices[prices.length - 1][1]);
       } catch (err) {
-        console.error("Couldn't fetch data from api:");
+        console.error("Couldn't fetch chart from api:");
         console.error(err);
       }
     },
-    async selectBaseCurrency({ commit, dispatch }, currency) {
+
+    async selectBaseCurrency({ commit, dispatch, getters }, currency) {
+
+      const oldBaseCurrency = getters.baseCurrency;
+      fetch(priceUrl(oldBaseCurrency.apiId, currency.vsCurrencyId))
+        .then(res => res.json())
+        .then(json => {
+          const rate = json[oldBaseCurrency.apiId][currency.vsCurrencyId];
+
+          commit("updateBaseValue", getters.baseValue * rate);
+        })
+        .catch(err => {
+          console.error(
+            "Couldn't fetch rate from api on changing base currency:"
+          );
+          console.error(err);
+        });
+
       commit("updateBaseCurrency", currency);
-      dispatch("fetchChart");
+
+      await dispatch("fetchChart");
     },
     async selectCounterCurrency({ commit, dispatch }, currency) {
       commit("updateCounterCurrency", currency);
       dispatch("fetchChart");
+    },
+    updateCounterValue({ commit, getters }, value) {
+      commit("updateBaseValue", value / getters.exchangeRate);
     },
   },
   mutations: {
@@ -76,6 +116,12 @@ export default {
     },
     updateCounterCurrency(state, currency) {
       state.counterCurrency = currency;
+    },
+    updateBaseValue(state, value) {
+      state.baseValue = value;
+    },
+    updateExchangeRate(state, rate) {
+      state.exchangeRate = rate;
     },
   },
 };
