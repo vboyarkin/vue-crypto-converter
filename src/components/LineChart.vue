@@ -39,7 +39,7 @@ export default {
             {
               display: this.displayAxes,
               ticks: {
-                callback: (value) => value + " " + this.counterCurrency.label,
+                callback: value => value + " " + this.counterCurrency.label,
               },
               gridLines: {
                 display: this.displayGrid,
@@ -54,7 +54,7 @@ export default {
           mode: "x-axis",
           callbacks: {
             label: (tooltipItem, data) => {
-              var label = data.datasets[tooltipItem.datasetIndex].label || "";
+              let label = data.datasets[tooltipItem.datasetIndex].label || "";
 
               if (label) label += ": ";
 

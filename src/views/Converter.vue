@@ -32,7 +32,7 @@
 
     <div class="chart-container">
       <span>График {{ currencyPairSpan }} за 14 дней</span>
-      <Chart class="chart" :chartDataProp="getChartData" />
+      <LineChart class="chart" :chartDataProp="getChartData" />
     </div>
   </div>
 </template>
@@ -41,10 +41,10 @@
 import { mapActions, mapGetters, mapMutations } from "vuex";
 import VueSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
-import Chart from "@/components/Chart.vue";
+import LineChart from "@/components/LineChart.vue";
 export default {
   name: "Home",
-  components: { Chart, VueSelect },
+  components: { LineChart, VueSelect },
   computed: {
     ...mapGetters([
       "baseCurrency",

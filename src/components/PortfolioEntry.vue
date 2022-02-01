@@ -68,7 +68,7 @@
         <span class="market_cap">{{ marketCap }} $</span>
       </td>
       <td>
-        <Chart
+        <LineChart
           class="chart"
           :chartDataProp="sparklineData"
           :displayTooltip="false"
@@ -89,13 +89,13 @@
 </template>
 
 <script>
-import Chart from "./Chart.vue";
+import LineChart from "./LineChart.vue";
 import sassVariables from "@/assets/styles/_variables.sass";
 import { mapActions } from "vuex";
 import { round } from "@/assets/utils.js";
 
 export default {
-  components: { Chart },
+  components: { LineChart },
   props: ["currency", "coinData"],
   data() {
     return {
