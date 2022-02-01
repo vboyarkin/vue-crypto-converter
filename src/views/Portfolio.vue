@@ -44,6 +44,7 @@
 <script>
 import { mapActions, mapGetters } from "vuex";
 import PortfolioEntry from "../components/PortfolioEntry.vue";
+
 export default {
   components: { PortfolioEntry },
   computed: {
@@ -66,9 +67,10 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["fetchPortfolioData"]),
+    ...mapActions(["fetchPortfolioData", "fetchPortfolio"]),
   },
   mounted() {
+    this.fetchPortfolio();
     this.fetchPortfolioData();
   },
 };

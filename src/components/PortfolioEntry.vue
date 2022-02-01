@@ -91,7 +91,8 @@
 <script>
 import Chart from "./Chart.vue";
 import sassVariables from "@/assets/styles/_variables.sass";
-import { mapMutations } from "vuex";
+import { mapActions } from "vuex";
+import { round } from "@/assets/utils.js";
 
 export default {
   components: { Chart },
@@ -137,7 +138,7 @@ export default {
     },
     holdingsUsd() {
       return (
-        (
+        round(
           this.currency.value * this.coinData.market_data.current_price.usd
         ).toLocaleString("ru-RU", {
           maximumFractionDigits: 6,
@@ -173,7 +174,7 @@ export default {
     },
   },
   methods: {
-    ...mapMutations(["addValueToPortfolio"]),
+    ...mapActions(["addValueToPortfolio"]),
     add(addAction) {
       this.isAdding = true;
       this.addAction = addAction;

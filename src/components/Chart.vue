@@ -1,6 +1,7 @@
 <script>
 import { Line, mixins } from "vue-chartjs";
 import { mapActions, mapGetters } from "vuex";
+import { round } from "@/assets/utils.js";
 
 export default {
   extends: Line,
@@ -57,10 +58,7 @@ export default {
 
               if (label) label += ": ";
 
-              const price = tooltipItem.yLabel;
-              if (price > 10) label += Math.round(price * 100) / 100;
-              else if (price > 1) label += Math.round(price * 10000) / 10000;
-              else label += Math.round(price * 10000000) / 10000000;
+              label += round(tooltipItem.yLabel);
 
               return label + " " + this.counterCurrency.label;
             },

@@ -133,6 +133,25 @@ export default {
     updateCounterValue({ commit, getters }, value) {
       commit("updateBaseValue", value / getters.exchangeRate);
     },
+    fetchPortfolio({ commit, dispatch }) {
+      const str = localStorage.getItem("portfolio");
+      if (str) {
+        try {
+          commit("updatePortfolio", JSON.parse(str));
+        } catch (err) {
+          console.error("Couldn't load portfolio from localStorage:");
+          console.error(err);
+          dispatch("savePortfolio");
+        }
+      }
+    },
+    savePortfolio({ state }) {
+      localStorage.setItem("portfolio", JSON.stringify(state.portfolio));
+    },
+    addValueToPortfolio({ commit, dispatch }, data) {
+      commit("addValueToPortfolio", data);
+      dispatch("savePortfolio");
+    },
   },
   mutations: {
     updateChart(state, chart) {
@@ -149,6 +168,9 @@ export default {
     },
     updateExchangeRate(state, rate) {
       state.exchangeRate = rate;
+    },
+    updatePortfolio(state, portfolio) {
+      state.portfolio = portfolio;
     },
     addValueToPortfolio(state, { apiId, value }) {
       const entryI = state.portfolio.findIndex(c => c.apiId === apiId);
