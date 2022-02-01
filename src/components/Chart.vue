@@ -7,21 +7,13 @@ export default {
   mixins: [mixins.reactiveData],
   props: {
     chartDataProp: null,
-    gridLineColor: {
-      default: "rgba(0,0,0,0.1)",
-    },
-    displayTooltip: {
-      default: true,
-    },
-    displayAxes: {
-      default: true,
-    },
-    displayGrid: {
-      default: true,
-    },
-    fillSpaceUnderLine: {
-      default: true,
-    },
+    gridLineColor: { default: "rgba(0,0,0,0.1)" },
+    displayTooltip: { default: true },
+    displayAxes: { default: true },
+    displayGrid: { default: true },
+    fillSpaceUnderLine: { default: true },
+    lineColor: { default: "rgba(255, 99, 132, 1)" },
+    lineBackgroundColor: { default: "rgba(255, 99, 132, 0.2)" },
   },
   data() {
     return {
@@ -103,8 +95,8 @@ export default {
               fill: this.fillSpaceUnderLine,
               lineTension: 0.15,
               data: Y,
-              backgroundColor: ["rgba(255, 99, 132, 0.2)"],
-              borderColor: ["rgba(255, 99, 132, 1)"],
+              backgroundColor: [this.lineBackgroundColor],
+              borderColor: [this.lineColor],
               borderWidth: 1,
               pointRadius: 0,
             },
