@@ -1,9 +1,39 @@
 <template>
-  <tbody v-if="coinData" class="portfolio-entry">
+  <tbody
+    v-if="coinData"
+    class="portfolio-entry"
+    v-on:keyup.esc.prevent="addClear"
+  >
     <tr>
-      <td class="name">
-        <img :src="coinData.image.thumb" alt="" />
-        <span class="name">{{ coinData.name }}</span>
+      <td class="add">
+        <div class="wrap">
+          <button @click="add('+')">+</button>
+          <button @click="add('-')">−</button>
+        </div>
+      </td>
+      <td class="name add-form">
+        <form class="add-form" v-show="isAdding">
+          <input
+            type="number"
+            v-model="addValue"
+            :ref="`add_input_${currency.apiId}`"
+          />
+          <div class="wrap">
+            <button
+              :class="{ disabled: !canSubmit }"
+              type="submit"
+              @click.prevent="addSubmit"
+            >
+              ✓
+            </button>
+            <button @click.prevent="addClear">×</button>
+          </div>
+        </form>
+
+        <div class="name-wrap">
+          <img :src="coinData.image.thumb" alt="" />
+          <span class="name">{{ coinData.name }}</span>
+        </div>
       </td>
       <td>
         <div class="holdings">
@@ -12,9 +42,7 @@
         </div>
       </td>
       <td class="right">
-        <span class="price"
-          >{{ coinData.market_data.current_price.usd }} $</span
-        >
+        <span class="price">{{ price }} $</span>
       </td>
       <td class="right">
         <span class="price-change" :class="{ decreased: priceChange24h < 0 }"
@@ -37,6 +65,7 @@
           :displayAxes="false"
           :displayGrid="false"
           :fillSpaceUnderLine="false"
+          :lineColor="sparklineColor"
         />
       </td>
     </tr>
@@ -44,17 +73,34 @@
 
   <tbody v-else class="portfolio-entry-loader">
     <tr>
-      <span>Загрузка...</span>
+      <td colspan="7"><span>Загрузка...</span></td>
     </tr>
   </tbody>
 </template>
 
 <script>
 import Chart from "./Chart.vue";
+import sassVariables from "@/assets/styles/_variables.sass";
+import { mapMutations } from "vuex";
+
 export default {
   components: { Chart },
   props: ["currency", "coinData"],
+  data() {
+    return {
+      isAdding: false,
+      addAction: "",
+      addValue: "",
+    };
+  },
   computed: {
+    price() {
+      return this.coinData.market_data.current_price.usd.toLocaleString(
+        "ru-RU",
+        { minimumFractionDigits: 2 },
+        { maximumFractionDigits: 2 }
+      );
+    },
     priceChange24h() {
       return (
         Math.round(this.coinData.market_data.price_change_percentage_24h * 10) /
@@ -71,16 +117,26 @@ export default {
       return this.coinData.market_data.market_cap.usd.toLocaleString("ru-RU");
     },
     holdingsCrypto() {
-      return this.currency.value + " " + this.currency.label;
+      return (
+        this.currency.value.toLocaleString("ru-RU", {
+          maximumFractionDigits: 12,
+        }) +
+        " " +
+        this.currency.label
+      );
     },
     holdingsUsd() {
       return (
-        this.currency.value * this.coinData.market_data.current_price.usd + " $"
+        (
+          this.currency.value * this.coinData.market_data.current_price.usd
+        ).toLocaleString("ru-RU", {
+          maximumFractionDigits: 6,
+        }) + " $"
       );
     },
     sparklineData() {
       const prices = this.coinData.market_data.sparkline_7d.price;
-      // let res = [];
+
       let X = [];
       for (let i = 0; i < prices.length; i++) {
         X[i] = i + 1;
@@ -91,21 +147,71 @@ export default {
         Y: prices,
       };
     },
+    sparklineColor() {
+      if (this.priceChange7d < 0) return sassVariables.colorDecrease;
+
+      return sassVariables.colorIncrease;
+    },
+    canSubmit() {
+      return this.addValue !== "";
+    },
+  },
+  methods: {
+    ...mapMutations(["addValueToPortfolio"]),
+    add(addAction) {
+      this.isAdding = true;
+      this.addAction = addAction;
+      this.$nextTick(() => {
+        this.$refs[`add_input_${this.currency.apiId}`].focus();
+      });
+    },
+    addSubmit() {
+      if (this.addValue === "") return;
+
+      const value = Number(
+        (this.addAction + this.addValue).replaceAll("+-", "-")
+      );
+
+      this.addValueToPortfolio({ apiId: this.currency.apiId, value });
+
+      this.addValue = "";
+      this.isAdding = false;
+    },
+    addClear() {
+      this.addValue = "";
+      this.isAdding = false;
+    },
   },
 };
 </script>
 
 <style lang="sass" scoped>
+button
+  cursor: pointer
+  padding: 7px 10px
+  background: #00000000
+  border: none
+  color: $color-table-head
+  font-size: 1.2rem
+  &:hover
+    background: $bg-hover
+
 span.name
   font-weight: 600
   color: #0e1419
   position: relative
   top: 1px
 
+td.name
+  *
+    vertical-align: middle
+  div.name-wrap
+    white-space: nowrap
+
 span.price-change
-  color: #4eaf0a
+  color: $color-increase
 span.decreased
-  color: #e15241
+  color: $color-decrease
 
 .holdings
   span
@@ -113,11 +219,95 @@ span.decreased
 
 .chart
   height: 60px
-
-td.name *
-  vertical-align: middle
+  max-width: 220px
 
 img
   width: 24px
   padding: 0 13px 0 0
+
+td.add
+  padding: 0
+  .wrap
+    display: flex
+    flex-direction: column
+    button
+      &:first-child
+        border-top-left-radius: $table-border-radius
+      &:last-child
+        border-bottom-left-radius: $table-border-radius
+
+td.add-form
+  position: relative
+
+form.add-form
+  // padding: 10px 14px 9px 16px
+  background: $bg-accent
+  position: absolute
+  display: flex
+  top: 0
+  left: 0
+  height: 100%
+  // width: 100%
+  animation: shadow .15s linear forwards
+  z-index: 999
+  border-top-right-radius: $table-border-radius
+  border-bottom-right-radius: $table-border-radius
+  .wrap
+    display: flex
+    flex-direction: column
+    button
+      padding: 7px 8.5px
+      background: $bg-accent
+      border: none
+      color: $color-table-head
+      font-size: 1.2rem
+      &:first-child
+        padding-top: 5px
+        padding-bottom: 5px
+        border-top-right-radius: $table-border-radius
+      &:last-child
+        border-bottom-right-radius: $table-border-radius
+      &:hover
+        background: $bg-hover
+      &[type="submit"].disabled
+        cursor: not-allowed
+        background: $bg-accent
+        color: $color-inactive
+
+  input
+    border: none
+    // animation: pulse .3s linear, shadow .5s linear forwards
+    width: calc(100% - 30px)
+    height: 100%
+    box-sizing: border-box
+    padding: 10px 4px 9px 10px
+    font-size: .9rem
+    &:focus-visible
+      outline: none
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button
+  -webkit-appearance: none
+  margin: 0
+
+.portfolio-entry-loader
+  td
+    text-align: center
+    height: 60px
+    animation: pulse 1s linear infinite
+
+@keyframes pulse
+  from
+    background: $bg-accent
+  to
+    background: $bg-accent
+
+  50%
+    background: $bg-hover-non-transparent
+
+@keyframes shadow
+  from
+    box-shadow: 2px 2px 19px rgba(0, 0, 0, 0)
+  to
+    box-shadow: 2px 2px 19px rgba(0, 0, 0, 0.11)
 </style>

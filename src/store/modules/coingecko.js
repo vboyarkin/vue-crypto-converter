@@ -150,9 +150,17 @@ export default {
     updateExchangeRate(state, rate) {
       state.exchangeRate = rate;
     },
-    updatePortfolio(state, { label, value }) {
-      const entry = state.portfolio.find(c => c.label === label);
-      entry.value = value;
+    addValueToPortfolio(state, { apiId, value }) {
+      const entryI = state.portfolio.findIndex(c => c.apiId === apiId);
+      const entry = state.portfolio[entryI];
+
+      entry.value += value;
+      if (entry.value < 0) {
+        console.warn("Value in portfolio cannot be negative!");
+        entry.value = 0;
+      }
+
+      state.portfolio.splice(entryI, 1, entry);
     },
     updatePortfolioEntry(state, data) {
       state.portfolioData[data.id] = data;

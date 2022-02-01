@@ -1,10 +1,15 @@
 <template>
   <div class="portfolio">
-    <span>Total balance usd:</span>
+    <div class="total-holdings-wrap">
+      <span class="total-holdings">
+        Стоимость портфеля: {{ totalHoldings }}
+      </span>
+    </div>
+
     <table>
       <thead>
         <tr>
-          <th>
+          <th colspan="2">
             <span class="name">Монета</span>
           </th>
           <th>
@@ -22,7 +27,7 @@
           <th>
             <span>Рыночная кап-ция</span>
           </th>
-          <th><span>Последние 7 дней</span></th>
+          <th><span>Цена за последние 7 дней</span></th>
         </tr>
       </thead>
 
@@ -43,6 +48,22 @@ export default {
   components: { PortfolioEntry },
   computed: {
     ...mapGetters(["portfolio", "portfolioData"]),
+    totalHoldings() {
+      let sum = 0;
+
+      for (const cur of this.portfolio) {
+        if (!this.portfolioData[cur.apiId]) return "";
+
+        sum +=
+          cur.value *
+          this.portfolioData[cur.apiId].market_data.current_price.usd;
+      }
+      return (
+        sum.toLocaleString("ru-RU", {
+          maximumFractionDigits: 2,
+        }) + " $"
+      );
+    },
   },
   methods: {
     ...mapActions(["fetchPortfolioData"]),
@@ -54,21 +75,28 @@ export default {
 </script>
 
 <style lang="sass">
+span
+  white-space: nowrap
+
+table
+  margin-left: auto
+  margin-right: auto
+
 td, th
   text-align: left
   padding: 5px 12px
-  background: #fff
+  background: $bg-accent
   border-radius: 1px
 
   &:first-child
-    border-top-left-radius: 6px
-    border-bottom-left-radius: 6px
+    border-top-left-radius: $table-border-radius
+    border-bottom-left-radius: $table-border-radius
     border-collapse: collapse
     border-right: none
     border-spacing: 0
   &:last-child
-    border-top-right-radius: 6px
-    border-bottom-right-radius: 6px
+    border-top-right-radius: $table-border-radius
+    border-bottom-right-radius: $table-border-radius
 
 .center
   text-align: center
@@ -79,13 +107,22 @@ td, th
 <style lang="sass" scoped>
 thead
   span
-    color: #4a4a4a
+    color: $color-table-head
     font-weight: 600
-    font-size: .90em
+    font-size: .90rem
   th
     padding: 10px 14px 9px 16px
     text-align: center
 
 span.name
   padding: 0 0 0 14px
+
+.total-holdings-wrap
+  margin-bottom: 16px
+
+  .total-holdings
+    border-radius: $table-border-radius
+    padding: 10px 16px
+    background: $bg-accent
+    font-weight: 600
 </style>
