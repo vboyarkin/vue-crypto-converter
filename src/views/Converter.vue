@@ -113,7 +113,8 @@ export default {
   margin-bottom: 4px
   input[type="number"]
     width: 140px
-    padding: 4px 2px 4px 9.5px
+    text-align: right
+    padding: 4px 9.5px 4px 0px
     border: 1px solid rgba(60,60,60,.26)
     border-right: 1px solid rgba(60,60,60,0)
     border-radius: 4px

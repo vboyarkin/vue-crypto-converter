@@ -10,17 +10,14 @@
 
 <style lang="sass">
 body
-  background: #00000007
+  background: $bg
 
 #app
-  font-family: Roboto, Helvetica, Arial, sans-serif
+  font-family: $main-font
   -webkit-font-smoothing: antialiased
   -moz-osx-font-smoothing: grayscale
   text-align: center
   color: #2c3e50
-
-  flex-direction: column
-  align-items: center
 
 #nav
   padding: 30px
