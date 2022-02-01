@@ -7,8 +7,18 @@
     <tr>
       <td class="add">
         <div class="wrap">
-          <button @click="add('+')">+</button>
-          <button @click="add('-')">−</button>
+          <button
+            :class="{ 'selected-action': isAddingPlus }"
+            @click="add('+')"
+          >
+            +
+          </button>
+          <button
+            :class="{ 'selected-action': isAddingMinus }"
+            @click="add('-')"
+          >
+            −
+          </button>
         </div>
       </td>
       <td class="name add-form">
@@ -54,7 +64,7 @@
           >{{ priceChange7d }}%</span
         >
       </td>
-      <td>
+      <td class="right">
         <span class="market_cap">{{ marketCap }} $</span>
       </td>
       <td>
@@ -155,6 +165,12 @@ export default {
     canSubmit() {
       return this.addValue !== "";
     },
+    isAddingPlus() {
+      return this.isAdding && this.addAction === "+";
+    },
+    isAddingMinus() {
+      return this.isAdding && this.addAction === "-";
+    },
   },
   methods: {
     ...mapMutations(["addValueToPortfolio"]),
@@ -191,10 +207,13 @@ button
   padding: 7px 10px
   background: #00000000
   border: none
-  color: $color-table-head
+  color: $color-alt
   font-size: 1.2rem
   &:hover
-    background: $bg-hover
+    // background: $bg-hover
+
+    // box-shadow:
+    animation: shadow .10s linear forwards, bg-hover .10s linear forwards
 
 span.name
   font-weight: 600
@@ -231,10 +250,13 @@ td.add
     display: flex
     flex-direction: column
     button
+      &.selected-action
+        background: $bg-hover
+        animation: shadow .10s linear forwards
       &:first-child
-        border-top-left-radius: $table-border-radius
+        border-top-left-radius: $border-radius
       &:last-child
-        border-bottom-left-radius: $table-border-radius
+        border-bottom-left-radius: $border-radius
 
 td.add-form
   position: relative
@@ -250,8 +272,8 @@ form.add-form
   // width: 100%
   animation: shadow .15s linear forwards
   z-index: 999
-  border-top-right-radius: $table-border-radius
-  border-bottom-right-radius: $table-border-radius
+  border-top-right-radius: $border-radius
+  border-bottom-right-radius: $border-radius
   .wrap
     display: flex
     flex-direction: column
@@ -259,19 +281,20 @@ form.add-form
       padding: 7px 8.5px
       background: $bg-accent
       border: none
-      color: $color-table-head
+      color: $color-alt
       font-size: 1.2rem
       &:first-child
         padding-top: 5px
         padding-bottom: 5px
-        border-top-right-radius: $table-border-radius
+        border-top-right-radius: $border-radius
       &:last-child
-        border-bottom-right-radius: $table-border-radius
+        border-bottom-right-radius: $border-radius
       &:hover
         background: $bg-hover
       &[type="submit"].disabled
         cursor: not-allowed
         background: $bg-accent
+        animation: none
         color: $color-inactive
 
   input
@@ -296,18 +319,18 @@ input::-webkit-inner-spin-button
     height: 60px
     animation: pulse 1s linear infinite
 
-@keyframes pulse
+@keyframes bg-hover
   from
     background: $bg-accent
   to
-    background: $bg-accent
+    background: $bg-hover
 
-  50%
-    background: $bg-hover-non-transparent
+  // 50%
+  //   background: $bg-hover-non-transparent
 
 @keyframes shadow
   from
     box-shadow: 2px 2px 19px rgba(0, 0, 0, 0)
   to
-    box-shadow: 2px 2px 19px rgba(0, 0, 0, 0.11)
+    box-shadow: $shadow
 </style>

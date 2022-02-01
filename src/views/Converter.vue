@@ -1,32 +1,39 @@
 <template>
   <div class="home">
     <div class="inputs">
-      <div class="input-wrap">
-        <input type="number" v-model="baseVal" />
-        <VueSelect
-          :clearable="false"
-          class="vue-select"
-          @input="onBaseCurrencyChange"
-          :options="currencyOptions[0]"
-          :value="baseCurrency"
-        />
+      <div>
+        <div class="input-wrap">
+          <input type="number" v-model="baseVal" />
+          <VueSelect
+            :clearable="false"
+            class="vue-select"
+            @input="onBaseCurrencyChange"
+            :options="currencyOptions[0]"
+            :value="baseCurrency"
+          />
+        </div>
       </div>
 
-      <div class="fill"></div>
+      <!-- <div class="fill"></div> -->
 
-      <div class="input-wrap">
-        <input type="number" v-model="counterVal" />
-        <VueSelect
-          :clearable="false"
-          class="vue-select"
-          @input="onCounterCurrencyChange"
-          :options="currencyOptions[1]"
-          :value="counterCurrency"
-        />
+      <div>
+        <div class="input-wrap">
+          <input type="number" v-model="counterVal" />
+          <VueSelect
+            :clearable="false"
+            class="vue-select"
+            @input="onCounterCurrencyChange"
+            :options="currencyOptions[1]"
+            :value="counterCurrency"
+          />
+        </div>
       </div>
     </div>
-    <span>{{ currencyPairSpan }}</span>
-    <Chart class="chart" :chartDataProp="getChartData" />
+
+    <div class="chart-container">
+      <span>График {{ currencyPairSpan }} за 14 дней</span>
+      <Chart class="chart" :chartDataProp="getChartData" />
+    </div>
   </div>
 </template>
 
@@ -92,8 +99,13 @@ export default {
 .vue-select
   width: 160px
   > div[role="combobox"]
+    border: none
+    background: $bg-accent
+    border-radius: $border-radius
     border-top-left-radius: 0px
     border-bottom-left-radius: 0px
+  svg[role="presentation"]
+    fill: $color-inactive
 </style>
 
 <style lang="sass" scoped>
@@ -103,25 +115,30 @@ export default {
   align-items: center
 
 .inputs
-  display: flex
-  justify-content: space-between
-  flex-wrap: wrap
-  margin: 0px 0px 16px 0px
+  // display: flex
+  // justify-content: space-between
+  // flex-wrap: wrap
+  > *
+    display: inline-block
+    margin: 0px 0px calc(2* $header-margin) 0px
 
 .input-wrap
   display: flex
-  margin-bottom: 4px
+  // margin-bottom: 2px
+  margin: 0 5px 2px
   input[type="number"]
     width: 140px
     text-align: right
     padding: 4px 9.5px 4px 0px
-    border: 1px solid rgba(60,60,60,.26)
-    border-right: 1px solid rgba(60,60,60,0)
-    border-radius: 4px
+    // border: 1px solid rgba(60,60,60,.26)
+    border: none
+    // border-right: 1px solid rgba(60,60,60,0)
+    border-radius: $border-radius
     border-top-right-radius: 0px
     border-bottom-right-radius: 0px
     font-size: inherit
     -moz-appearance: textfield
+    margin-right: 2px
     &:focus-visible
       outline: none
 
@@ -130,13 +147,37 @@ input::-webkit-inner-spin-button
   -webkit-appearance: none
   margin: 0
 
-div.fill
-  width: 15px
+// div.fill
+//   width: 15px
 
-.chart
-  min-width: 270px
-  height: 380px
+.chart-container
+  box-sizing: border-box
   width: 100vw
-  @media screen and (min-width: 700px)
+  @media screen and (min-width: 800px)
     width: 70vw
+
+  > *
+    border-radius: $border-radius
+    padding: 16px 26px
+    background: $bg-accent
+
+  span
+    // padding-top: 11px
+    // padding-bottom: 10px
+    padding: 10px 16px
+    color: $color-alt
+    font-weight: 600
+    display: inline-block
+    box-sizing: border-box
+    width: 100%
+    margin-bottom: 2px
+    border-bottom-left-radius: 0
+    border-bottom-right-radius: 0
+
+  .chart
+    padding-left: 10px
+    min-width: 270px
+    height: 380px
+    border-top-left-radius: 0
+    border-top-right-radius: 0
 </style>

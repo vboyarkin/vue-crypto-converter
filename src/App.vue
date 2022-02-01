@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/">Конвертер</router-link> |
+      <router-link to="/">Конвертер</router-link>
       <router-link to="/Portfolio">Портфель</router-link>
     </div>
     <router-view />
@@ -23,9 +23,23 @@ body
   padding: 30px
 
   a
-    font-weight: bold
-    color: #2c3e50
+    background: $bg-accent
+    padding: 10px 14px 10px 16px
+    color: $color-alt
+    text-decoration: none
+    &:hover
+      animation: $animation-shadow
+
+    &:first-child
+      margin-right: 2px
+      border-top-left-radius: $border-radius
+      border-bottom-left-radius: $border-radius
+
+    &:nth-child(2)
+      border-top-right-radius: $border-radius
+      border-bottom-right-radius: $border-radius
 
     &.router-link-exact-active
-      color: #42b983
+      box-shadow: $shadow
+      font-weight: bold
 </style>

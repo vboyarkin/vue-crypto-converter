@@ -89,14 +89,14 @@ td, th
   border-radius: 1px
 
   &:first-child
-    border-top-left-radius: $table-border-radius
-    border-bottom-left-radius: $table-border-radius
+    border-top-left-radius: $border-radius
+    border-bottom-left-radius: $border-radius
     border-collapse: collapse
     border-right: none
     border-spacing: 0
   &:last-child
-    border-top-right-radius: $table-border-radius
-    border-bottom-right-radius: $table-border-radius
+    border-top-right-radius: $border-radius
+    border-bottom-right-radius: $border-radius
 
 .center
   text-align: center
@@ -107,7 +107,7 @@ td, th
 <style lang="sass" scoped>
 thead
   span
-    color: $color-table-head
+    color: $color-alt
     font-weight: 600
     font-size: .90rem
   th
@@ -118,10 +118,11 @@ span.name
   padding: 0 0 0 14px
 
 .total-holdings-wrap
-  margin-bottom: 16px
+  margin-bottom: $header-margin
 
   .total-holdings
-    border-radius: $table-border-radius
+    display: inline-block
+    border-radius: $border-radius
     padding: 10px 16px
     background: $bg-accent
     font-weight: 600
