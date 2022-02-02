@@ -1,10 +1,11 @@
 $main-font: Roboto, Avenir, Helvetica, Arial, sans-serif
 
 $color-inactive: #a7a7a7
+// $bg: #00000010
+$bg: #efefef
 $bg-accent: #ffffffff
 $bg-hover: #00000015
 $bg-hover-non-transparent: #f7f7f7ff
-$bg: #00000010
 $color-alt: #4a4a4a
 
 $color-increase: #4eaf0a
@@ -15,6 +16,30 @@ $header-margin: 8px
 
 $shadow: 2px 2px 19px rgba(0, 0, 0, 0.11)
 
+$animation-pulse-loader: pulse 1s linear infinite
+
+@keyframes bg-hover
+  from
+    background: $bg-accent
+  to
+    background: $bg-hover
+
+@keyframes shadow
+  from
+    box-shadow: 2px 2px 19px rgba(0, 0, 0, 0)
+  to
+    box-shadow: $shadow
+
+@keyframes pulse
+  from
+    opacity: 100%
+  to
+    opacity: 1000%
+
+  50%
+    opacity: 25%
+
 :export
+  bg: $bg
   colorIncrease: $color-increase
   colorDecrease: $color-decrease

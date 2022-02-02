@@ -211,9 +211,6 @@ button
   color: $color-alt
   font-size: 1.2rem
   &:hover
-    // background: $bg-hover
-
-    // box-shadow:
     animation: shadow .10s linear forwards, bg-hover .10s linear forwards
 
 span.name
@@ -263,14 +260,12 @@ td.add-form
   position: relative
 
 form.add-form
-  // padding: 10px 14px 9px 16px
   background: $bg-accent
   position: absolute
   display: flex
   top: 0
   left: 0
   height: 100%
-  // width: 100%
   animation: shadow .15s linear forwards
   z-index: 999
   border-top-right-radius: $border-radius
@@ -300,7 +295,6 @@ form.add-form
 
   input
     border: none
-    // animation: pulse .3s linear, shadow .5s linear forwards
     width: calc(100% - 30px)
     height: 100%
     box-sizing: border-box
@@ -318,20 +312,5 @@ input::-webkit-inner-spin-button
   td
     text-align: center
     height: 60px
-    animation: pulse 1s linear infinite
-
-@keyframes bg-hover
-  from
-    background: $bg-accent
-  to
-    background: $bg-hover
-
-  // 50%
-  //   background: $bg-hover-non-transparent
-
-@keyframes shadow
-  from
-    box-shadow: 2px 2px 19px rgba(0, 0, 0, 0)
-  to
-    box-shadow: $shadow
+    animation: $animation-pulse-loader
 </style>

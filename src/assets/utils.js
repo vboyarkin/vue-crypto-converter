@@ -4,4 +4,16 @@ function round(num) {
   else return Math.round(num * 10000000) / 10000000;
 }
 
-export { round };
+const colors = [
+  "#f67019",
+  "#4dc9f6",
+  "#f53794",
+  "#537bc4",
+  "#acc236",
+  "#166a8f",
+  "#00a950",
+  "#58595b",
+  "#8549ba",
+];
+
+export { round, colors };

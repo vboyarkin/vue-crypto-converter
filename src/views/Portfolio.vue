@@ -1,9 +1,20 @@
 <template>
   <div class="portfolio">
-    <div class="total-holdings-wrap">
-      <span class="total-holdings">
-        Стоимость портфеля: {{ totalHoldings }}
-      </span>
+    <div class="doughnut-chart-container">
+      <div class="doughnut-chart-wrap">
+        <DoughnutChart
+          v-if="doughnutChartData"
+          class="doughnut-chart"
+          :chartDataProp="doughnutChartData"
+          :borderColor="doughnutBorderColor"
+        />
+        <div v-else class="doughnut-loader"><span>Загрузка...</span></div>
+      </div>
+      <div class="total-holdings-wrap">
+        <span class="total-holdings">
+          Стоимость портфеля: {{ totalHoldings }}
+        </span>
+      </div>
     </div>
 
     <table>
@@ -43,10 +54,12 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
-import PortfolioEntry from "../components/PortfolioEntry.vue";
+import DoughnutChart from "@/components/DoughnutChart.vue";
+import PortfolioEntry from "@/components/PortfolioEntry.vue";
+import { colors } from "@/assets/utils.js";
 
 export default {
-  components: { PortfolioEntry },
+  components: { PortfolioEntry, DoughnutChart },
   computed: {
     ...mapGetters(["portfolio", "portfolioData"]),
     totalHoldings() {
@@ -64,6 +77,21 @@ export default {
           maximumFractionDigits: 2,
         }) + " $"
       );
+    },
+    doughnutChartData() {
+      const X = [];
+      const Y = [];
+
+      for (const cur of this.portfolio) {
+        if (!this.portfolioData[cur.apiId]) continue;
+        if (!cur.value) return null;
+
+        const usd = this.portfolioData[cur.apiId].market_data.current_price.usd;
+        X.push(cur.label);
+        Y.push(cur.value * usd);
+      }
+
+      return { X, Y, colors };
     },
   },
   methods: {
@@ -121,11 +149,37 @@ span.name
 
 .total-holdings-wrap
   margin-bottom: $header-margin
+  border-bottom-left-radius: $border-radius
+  border-bottom-right-radius: $border-radius
+  background: $bg-accent
+  width: 100%
 
   .total-holdings
     display: inline-block
-    border-radius: $border-radius
     padding: 10px 16px
-    background: $bg-accent
     font-weight: 600
+
+.doughnut-chart-container
+  width: fit-content
+  margin-right: auto
+  margin-left: auto
+
+  .doughnut-chart-wrap
+    width: auto
+    background: $bg-accent
+    border-top-left-radius: $border-radius
+    border-top-right-radius: $border-radius
+    margin-bottom: 2px
+    .doughnut-chart
+      margin-right: auto
+      margin-left: auto
+      max-width: 250px
+    .doughnut-loader
+      animation: $animation-pulse-loader
+      vertical-align: middle
+      span
+        display: inline-flex
+        align-items: center
+        min-height: 250px
+        margin-top: auto
 </style>
