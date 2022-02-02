@@ -39,7 +39,7 @@ export default {
             {
               display: this.displayAxes,
               ticks: {
-                callback: value => value + " " + this.counterCurrency.label,
+                callback: (value) => value + " " + this.counterCurrency.label,
               },
               gridLines: {
                 display: this.displayGrid,

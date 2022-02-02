@@ -14,8 +14,6 @@
         </div>
       </div>
 
-      <!-- <div class="fill"></div> -->
-
       <div>
         <div class="input-wrap">
           <input type="number" v-model="counterVal" />

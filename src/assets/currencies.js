@@ -4,7 +4,7 @@ const currencies = [
   { label: "ETH", apiId: "ethereum", vsCurrencyId: "eth" },
 ];
 let blankCurrencyObject = {};
-currencies.forEach(x => (blankCurrencyObject[x.apiId] = undefined));
+currencies.forEach((x) => (blankCurrencyObject[x.apiId] = undefined));
 
 export default currencies;
 export { blankCurrencyObject };

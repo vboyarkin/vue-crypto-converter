@@ -4,7 +4,7 @@ const priceUrl = (apiId, vsCurrencyId) =>
   `https://api.coingecko.com/api/v3/simple/price?ids=${apiId}&vs_currencies=${vsCurrencyId}`;
 const chartUrl = (apiId, vsCurrencyId) =>
   `https://api.coingecko.com/api/v3/coins/${apiId}/market_chart?vs_currency=${vsCurrencyId}&days=14`;
-const portfolioDataUrl = apiId =>
+const portfolioDataUrl = (apiId) =>
   `https://api.coingecko.com/api/v3/coins/${apiId}?tickers=false&community_data=false&developer_data=false&sparkline=true`;
 
 export default {
@@ -16,8 +16,8 @@ export default {
     baseValue: 1,
     exchangeRate: 1,
     portfolio: currencies
-      .filter(c => c.apiId)
-      .map(c => {
+      .filter((c) => c.apiId)
+      .map((c) => {
         return { ...c, value: 0 };
       }),
     portfolioData: { ...blankCurrencyObject },
@@ -54,8 +54,8 @@ export default {
     },
     currencyOptions(state) {
       return [
-        [...state.currencies.filter(c => c.apiId)],
-        [...state.currencies.filter(c => c.vsCurrencyId)],
+        [...state.currencies.filter((c) => c.apiId)],
+        [...state.currencies.filter((c) => c.vsCurrencyId)],
       ];
     },
     exchangeRate(state) {
@@ -95,7 +95,7 @@ export default {
     },
 
     async fetchPortfolioData({ dispatch, getters }) {
-      const promises = getters.portfolio.map(currency =>
+      const promises = getters.portfolio.map((currency) =>
         dispatch("fetchPortfolioEntry", currency)
       );
 
@@ -109,13 +109,13 @@ export default {
     async selectBaseCurrency({ commit, dispatch, getters }, currency) {
       const oldBaseCurrency = getters.baseCurrency;
       fetch(priceUrl(oldBaseCurrency.apiId, currency.vsCurrencyId))
-        .then(res => res.json())
-        .then(json => {
+        .then((res) => res.json())
+        .then((json) => {
           const rate = json[oldBaseCurrency.apiId][currency.vsCurrencyId];
 
           commit("updateBaseValue", getters.baseValue * rate);
         })
-        .catch(err => {
+        .catch((err) => {
           console.error(
             "Couldn't fetch rate from api on changing base currency:"
           );
@@ -173,7 +173,7 @@ export default {
       state.portfolio = portfolio;
     },
     addValueToPortfolio(state, { apiId, value }) {
-      const entryI = state.portfolio.findIndex(c => c.apiId === apiId);
+      const entryI = state.portfolio.findIndex((c) => c.apiId === apiId);
       const entry = state.portfolio[entryI];
 
       entry.value += value;
