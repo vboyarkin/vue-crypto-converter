@@ -1,20 +1,20 @@
 <template>
   <div class="portfolio">
     <div class="doughnut-chart-container">
-      <div class="doughnut-chart-wrap">
-        <DoughnutChart
-          v-if="doughnutChartData"
-          class="doughnut-chart"
-          :chartDataProp="doughnutChartData"
-          :borderColor="doughnutBorderColor"
-        />
-        <div v-else class="doughnut-loader"><span>Загрузка...</span></div>
-      </div>
-      <div class="total-holdings-wrap">
-        <span class="total-holdings">
+      <CardWithHead :inversed="true">
+        <template v-slot:main-content>
+          <DoughnutChart
+            v-if="doughnutChartData"
+            class="doughnut-chart"
+            :chartDataProp="doughnutChartData"
+          />
+          <Loader v-else class="loader" />
+        </template>
+
+        <template v-slot:head>
           Стоимость портфеля: {{ totalHoldings }}
-        </span>
-      </div>
+        </template>
+      </CardWithHead>
     </div>
 
     <table>
@@ -57,9 +57,16 @@ import { mapActions, mapGetters } from "vuex";
 import DoughnutChart from "@/components/DoughnutChart.vue";
 import PortfolioEntry from "@/components/PortfolioEntry.vue";
 import { colors } from "@/assets/utils.js";
+import Loader from "@/components/Loader.vue";
+import CardWithHead from "@/components/CardWithHead.vue";
 
 export default {
-  components: { PortfolioEntry, DoughnutChart },
+  components: {
+    PortfolioEntry,
+    DoughnutChart,
+    Loader,
+    CardWithHead,
+  },
   computed: {
     ...mapGetters(["portfolio", "portfolioData"]),
     totalHoldings() {
@@ -132,6 +139,9 @@ td, th
   text-align: center
 .right
   text-align: right
+
+.doughnut-chart-container .loader span
+  min-height: 250px
 </style>
 
 <style lang="sass" scoped>
@@ -163,23 +173,9 @@ span.name
   width: fit-content
   margin-right: auto
   margin-left: auto
-
-  .doughnut-chart-wrap
-    width: auto
-    background: $bg-accent
-    border-top-left-radius: $border-radius
-    border-top-right-radius: $border-radius
-    margin-bottom: 2px
-    .doughnut-chart
-      margin-right: auto
-      margin-left: auto
-      max-width: 250px
-    .doughnut-loader
-      animation: $animation-pulse-loader
-      vertical-align: middle
-      span
-        display: inline-flex
-        align-items: center
-        min-height: 250px
-        margin-top: auto
+  margin-bottom: $header-margin
+  .doughnut-chart
+    margin-right: auto
+    margin-left: auto
+    max-width: 250px
 </style>

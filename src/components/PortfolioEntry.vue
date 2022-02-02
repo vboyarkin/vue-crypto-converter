@@ -83,7 +83,7 @@
 
   <tbody v-else class="portfolio-entry-loader">
     <tr>
-      <td colspan="7"><span>Загрузка...</span></td>
+      <td colspan="8"><Loader /></td>
     </tr>
   </tbody>
 </template>
@@ -93,9 +93,10 @@ import LineChart from "./LineChart.vue";
 import sassVariables from "@/assets/styles/_variables.sass";
 import { mapActions } from "vuex";
 import { round } from "@/assets/utils.js";
+import Loader from "./Loader.vue";
 
 export default {
-  components: { LineChart },
+  components: { LineChart, Loader },
   props: ["currency", "coinData"],
   data() {
     return {
@@ -211,7 +212,7 @@ button
   color: $color-alt
   font-size: 1.2rem
   &:hover
-    animation: shadow .10s linear forwards, bg-hover .10s linear forwards
+    animation: $animation-shadow, bg-hover .10s linear forwards
 
 span.name
   font-weight: 600
@@ -312,5 +313,4 @@ input::-webkit-inner-spin-button
   td
     text-align: center
     height: 60px
-    animation: $animation-pulse-loader
 </style>

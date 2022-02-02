@@ -28,10 +28,17 @@
       </div>
     </div>
 
-    <div class="chart-container">
-      <span>График {{ currencyPairSpan }} за 14 дней</span>
-      <LineChart class="chart" :chartDataProp="getChartData" />
-    </div>
+    <CardWithHead class="chart-container">
+      <template v-slot:head>График {{ currencyPairSpan }} за 14 дней</template>
+      <template v-slot:main-content>
+        <LineChart
+          v-if="getChartData"
+          class="chart"
+          :chartDataProp="getChartData"
+        />
+        <Loader v-else class="loader" />
+      </template>
+    </CardWithHead>
   </div>
 </template>
 
@@ -39,10 +46,12 @@
 import { mapActions, mapGetters, mapMutations } from "vuex";
 import VueSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
+import Loader from "@/components/Loader.vue";
 import LineChart from "@/components/LineChart.vue";
+import CardWithHead from "@/components/CardWithHead.vue";
 export default {
   name: "Home",
-  components: { LineChart, VueSelect },
+  components: { LineChart, VueSelect, Loader, CardWithHead },
   computed: {
     ...mapGetters([
       "baseCurrency",
@@ -104,6 +113,23 @@ export default {
     border-bottom-left-radius: 0px
   svg[role="presentation"]
     fill: $color-inactive
+  .vs__selected
+    color: $color-alt
+  .vs__dropdown-menu
+    box-shadow: $shadow
+    border: none
+
+.chart-container
+  margin-bottom: $header-margin
+  box-sizing: border-box
+  width: 100vw !important
+  @media screen and (min-width: 800px)
+    width: 70vw !important
+
+  .chart, .loader
+    padding: 16px 26px 16px 10px
+    min-width: 270px
+    height: 380px
 </style>
 
 <style lang="sass" scoped>
@@ -113,24 +139,18 @@ export default {
   align-items: center
 
 .inputs
-  // display: flex
-  // justify-content: space-between
-  // flex-wrap: wrap
   > *
     display: inline-block
     margin: 0px 0px calc(2* $header-margin) 0px
 
 .input-wrap
   display: flex
-  // margin-bottom: 2px
   margin: 0 5px 2px
   input[type="number"]
     width: 140px
     text-align: right
     padding: 4px 9.5px 4px 0px
-    // border: 1px solid rgba(60,60,60,.26)
     border: none
-    // border-right: 1px solid rgba(60,60,60,0)
     border-radius: $border-radius
     border-top-right-radius: 0px
     border-bottom-right-radius: 0px
@@ -138,44 +158,11 @@ export default {
     -moz-appearance: textfield
     margin-right: 2px
     &:focus-visible
+      animation: $animation-shadow
       outline: none
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button
   -webkit-appearance: none
   margin: 0
-
-// div.fill
-//   width: 15px
-
-.chart-container
-  box-sizing: border-box
-  width: 100vw
-  @media screen and (min-width: 800px)
-    width: 70vw
-
-  > *
-    border-radius: $border-radius
-    padding: 16px 26px
-    background: $bg-accent
-
-  span
-    // padding-top: 11px
-    // padding-bottom: 10px
-    padding: 10px 16px
-    color: $color-alt
-    font-weight: 600
-    display: inline-block
-    box-sizing: border-box
-    width: 100%
-    margin-bottom: 2px
-    border-bottom-left-radius: 0
-    border-bottom-right-radius: 0
-
-  .chart
-    padding-left: 10px
-    min-width: 270px
-    height: 380px
-    border-top-left-radius: 0
-    border-top-right-radius: 0
 </style>
