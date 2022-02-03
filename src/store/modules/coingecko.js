@@ -69,6 +69,9 @@ export default {
         Math.round(state.baseValue * getters.exchangeRate * 10000000) / 10000000
       );
     },
+    canSwitchCurrencies(state, { baseCurrency, counterCurrency }) {
+      return baseCurrency.vsCurrencyId && counterCurrency.apiId;
+    },
     portfolio(state) {
       return state.portfolio;
     },
@@ -108,6 +111,7 @@ export default {
     },
     async selectBaseCurrency({ commit, dispatch, getters }, currency) {
       const oldBaseCurrency = getters.baseCurrency;
+
       fetch(priceUrl(oldBaseCurrency.apiId, currency.vsCurrencyId))
         .then((res) => res.json())
         .then((json) => {
@@ -130,6 +134,22 @@ export default {
       commit("updateCounterCurrency", currency);
       dispatch("fetchChart");
     },
+    async switchCurrencies({
+      commit,
+      dispatch,
+      getters: { baseCurrency, counterCurrency },
+    }) {
+      if (!baseCurrency.vsCurrencyId || !counterCurrency.apiId) return;
+
+      const [base, coun] = [baseCurrency, counterCurrency];
+      commit("updateBaseCurrency", coun);
+      commit("updateCounterCurrency", base);
+
+      dispatch("fetchChart");
+
+      dispatch;
+    },
+
     updateCounterValue({ commit, getters }, value) {
       commit("updateBaseValue", value / getters.exchangeRate);
     },

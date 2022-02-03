@@ -14,6 +14,26 @@
         </div>
       </div>
 
+      <div
+        class="change-currencies"
+        :class="{ disabled: !canSwitchCurrencies }"
+      >
+        <input
+          type="image"
+          @click="switchCurrencies"
+          class="icon-vertical"
+          src="./icons/exchange-vertical.svg"
+          alt=""
+        />
+        <input
+          type="image"
+          @click="switchCurrencies"
+          class="icon-horizontal"
+          src="./icons/exchange-horizontal.svg"
+          alt=""
+        />
+      </div>
+
       <div>
         <div class="input-wrap">
           <input type="number" v-model="counterVal" />
@@ -49,6 +69,7 @@ import "vue-select/dist/vue-select.css";
 import Loader from "@/components/Loader.vue";
 import LineChart from "@/components/LineChart.vue";
 import CardWithHead from "@/components/CardWithHead.vue";
+
 export default {
   name: "Home",
   components: { LineChart, VueSelect, Loader, CardWithHead },
@@ -60,6 +81,7 @@ export default {
       "counterValue",
       "currencyOptions",
       "getChartData",
+      "canSwitchCurrencies",
     ]),
     currencyPairSpan() {
       return this.baseCurrency.label + "/" + this.counterCurrency.label;
@@ -87,6 +109,7 @@ export default {
       "selectCounterCurrency",
       "fetchChart",
       "updateCounterValue",
+      "switchCurrencies",
     ]),
     ...mapMutations(["updateBaseValue"]),
     onBaseCurrencyChange(currency) {
@@ -160,7 +183,27 @@ export default {
     > *
       vertical-align: middle
       display: inline-block
-    margin: 0px 0px calc(2* $header-margin) 0px
+
+.change-currencies
+  padding: 0px
+  width: 32px
+  height: 32px
+  background: $bg-accent
+  border-radius: $border-radius
+
+  @include shadow-transition-after
+
+  > *
+    width: 1.60rem
+    padding: 3px 3px 3px 3px
+
+.change-currencies.disabled
+  cursor: not-allowed
+  color: $color-inactive
+  @include shadow-transition-after-cancel
+  *
+    filter: opacity(0.5)
+    cursor: not-allowed
 
 .input-wrap
   display: flex
