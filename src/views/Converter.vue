@@ -112,7 +112,7 @@ export default {
     border-top-left-radius: 0px
     border-bottom-left-radius: 0px
   svg[role="presentation"]
-    fill: $color-inactive
+    fill: $color-alt
   .vs__selected
     color: $color-alt
   .vs__dropdown-menu
@@ -139,13 +139,31 @@ export default {
   align-items: center
 
 .inputs
-  > *
-    display: inline-block
+  display: flex
+  flex-direction: column
+  align-items: center
+  margin: 0px 0px calc(2* $header-margin) 0px
+@media screen and (max-width: 700px)
+  .icon-horizontal
+    display: none
+  .change-currencies
+    margin: 7px 10px 5px 0
+    margin: $header-margin 10px $header-margin 0
+
+@media screen and (min-width: 700px)
+  .icon-vertical
+    display: none
+  .change-currencies
+    margin: 0 $header-margin
+  .inputs
+    display: block
+    > *
+      vertical-align: middle
+      display: inline-block
     margin: 0px 0px calc(2* $header-margin) 0px
 
 .input-wrap
   display: flex
-  margin: 0 5px 2px
   input[type="number"]
     width: 140px
     text-align: right
@@ -157,8 +175,9 @@ export default {
     font-size: inherit
     -moz-appearance: textfield
     margin-right: 2px
+
+    @include shadow-transition(focus-visible)
     &:focus-visible
-      animation: $animation-shadow
       outline: none
 
 input::-webkit-outer-spin-button,

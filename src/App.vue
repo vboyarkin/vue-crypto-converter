@@ -27,8 +27,7 @@ body
     padding: 10px 14px 10px 16px
     color: $color-alt
     text-decoration: none
-    &:hover
-      animation: $animation-shadow
+    @include shadow-transition-after
 
     &:first-child
       margin-right: 2px
@@ -41,5 +40,6 @@ body
 
     &.router-link-exact-active
       box-shadow: $shadow
+      @include shadow-transition-after-cancel
       font-weight: bold
 </style>

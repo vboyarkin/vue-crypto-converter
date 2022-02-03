@@ -22,7 +22,7 @@
         </div>
       </td>
       <td class="name add-form">
-        <form class="add-form" v-show="isAdding">
+        <form class="add-form" :class="{ enabled: showForm }" v-show="isAdding">
           <input
             type="number"
             v-model="addValue"
@@ -103,6 +103,7 @@ export default {
       isAdding: false,
       addAction: "",
       addValue: "",
+      showForm: false,
     };
   },
   computed: {
@@ -181,6 +182,7 @@ export default {
       this.addAction = addAction;
       this.$nextTick(() => {
         this.$refs[`add_input_${this.currency.apiId}`].focus();
+        this.showForm = true;
       });
     },
     addSubmit() {
@@ -197,7 +199,11 @@ export default {
     },
     addClear() {
       this.addValue = "";
-      this.isAdding = false;
+      this.addAction = "";
+      this.showForm = false;
+      setTimeout(() => {
+        this.isAdding = false;
+      }, 150);
     },
   },
 };
@@ -211,8 +217,8 @@ button
   border: none
   color: $color-alt
   font-size: 1.2rem
-  &:hover
-    animation: $animation-shadow, bg-hover .10s linear forwards
+  @include shadow-transition-after
+  @include bg-transition
 
 span.name
   font-weight: 600
@@ -251,7 +257,7 @@ td.add
     button
       &.selected-action
         background: $bg-hover
-        animation: shadow .10s linear forwards
+        @include shadow-transition-after-on
       &:first-child
         border-top-left-radius: $border-radius
       &:last-child
@@ -261,16 +267,17 @@ td.add-form
   position: relative
 
 form.add-form
+  opacity: 0
   background: $bg-accent
   position: absolute
   display: flex
   top: 0
   left: 0
   height: 100%
-  animation: shadow .15s linear forwards
   z-index: 999
   border-top-right-radius: $border-radius
   border-bottom-right-radius: $border-radius
+  transition: opacity .15s ease-in-out
   .wrap
     display: flex
     flex-direction: column
@@ -280,20 +287,20 @@ form.add-form
       border: none
       color: $color-alt
       font-size: 1.2rem
+      @include bg-transition
+      @include shadow-transition-after
       &:first-child
         padding-top: 5px
         padding-bottom: 5px
         border-top-right-radius: $border-radius
       &:last-child
         border-bottom-right-radius: $border-radius
-      &:hover
-        background: $bg-hover
+        height: 100%
       &[type="submit"].disabled
         cursor: not-allowed
         background: $bg-accent
-        animation: none
         color: $color-inactive
-
+        @include shadow-transition-after-cancel
   input
     border: none
     width: calc(100% - 30px)
@@ -303,6 +310,9 @@ form.add-form
     font-size: .9rem
     &:focus-visible
       outline: none
+
+form.add-form.enabled
+  opacity: 1
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button
