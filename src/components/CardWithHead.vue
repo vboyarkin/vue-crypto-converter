@@ -1,14 +1,14 @@
 <template>
   <div class="card-container">
-    <div v-if="!inversed" class="head-wrap">
+    <div v-if="!inversed" class="head-wrap" :class="{ round: squashToHead }">
       <span class="head">
         <slot name="head"></slot>
       </span>
     </div>
-    <div class="card-wrap">
+    <div v-if="!squashToHead" class="card-wrap">
       <slot name="main-content"></slot>
     </div>
-    <div v-if="inversed" class="head-wrap">
+    <div v-if="inversed" class="head-wrap" :class="{ round: squashToHead }">
       <span class="head">
         <slot name="head"></slot>
       </span>
@@ -20,6 +20,9 @@
 export default {
   props: {
     inversed: {
+      default: false,
+    },
+    squashToHead: {
       default: false,
     },
   },
@@ -49,4 +52,7 @@ export default {
     font-size: inherit
     display: inline-block
     padding: 10px 16px
+
+  .round
+    border-radius: $border-radius
 </style>

@@ -1,17 +1,17 @@
 <template>
   <div class="portfolio">
     <div class="doughnut-chart-container">
-      <CardWithHead :inversed="true">
+      <CardWithHead :inversed="true" :squashToHead="isPortfolioEmpty">
         <template v-slot:main-content>
+          <Loader v-if="isLoadingPortfolioData" class="loader" />
           <DoughnutChart
-            v-if="doughnutChartData"
+            v-if="!isLoadingPortfolioData && doughnutChartData"
             class="doughnut-chart"
             :chartDataProp="doughnutChartData"
           />
-          <Loader v-else class="loader" />
         </template>
 
-        <template v-slot:head>
+        <template v-slot:head class="round">
           Стоимость портфеля: {{ totalHoldings }}
         </template>
       </CardWithHead>
@@ -61,6 +61,9 @@ import Loader from "@/components/Loader.vue";
 import CardWithHead from "@/components/CardWithHead.vue";
 
 export default {
+  data() {
+    return { isLoadingPortfolioData: true };
+  },
   components: {
     PortfolioEntry,
     DoughnutChart,
@@ -69,7 +72,14 @@ export default {
   },
   computed: {
     ...mapGetters(["portfolio", "portfolioData"]),
+    isPortfolioEmpty() {
+      if (!this.portfolio) return true;
+
+      return this.portfolio.reduce((acc, cur) => acc + cur.value, 0) === 0;
+    },
     totalHoldings() {
+      if (this.isPortfolioEmpty) return 0;
+
       let sum = 0;
 
       for (const cur of this.portfolio) {
@@ -106,7 +116,7 @@ export default {
   },
   mounted() {
     this.fetchPortfolio();
-    this.fetchPortfolioData();
+    this.fetchPortfolioData().then(() => (this.isLoadingPortfolioData = false));
   },
 };
 </script>
