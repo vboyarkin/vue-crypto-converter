@@ -18,20 +18,12 @@
         class="change-currencies"
         :class="{ disabled: !canSwitchCurrencies }"
       >
-        <input
-          type="image"
-          @click="switchCurrencies"
-          class="icon-vertical"
-          src="./icons/exchange-vertical.svg"
-          alt=""
-        />
-        <input
-          type="image"
-          @click="switchCurrencies"
-          class="icon-horizontal"
-          src="./icons/exchange-horizontal.svg"
-          alt=""
-        />
+        <button @click="switchCurrencies" class="icon-vertical" alt="">
+          <img src="@/assets/icons/exchange-vertical.svg" alt="" />
+        </button>
+        <button @click="switchCurrencies" class="icon-horizontal" alt="">
+          <img src="@/assets/icons/exchange-horizontal.svg" alt="" />
+        </button>
       </div>
 
       <div>
@@ -166,6 +158,7 @@ export default {
   flex-direction: column
   align-items: center
   margin: 0px 0px calc(2* $header-margin) 0px
+
 @media screen and (max-width: 700px)
   .icon-horizontal
     display: none
@@ -193,9 +186,17 @@ export default {
 
   @include shadow-transition-after
 
-  > *
+  > button
+    cursor: pointer
+    background: none
     width: 1.60rem
-    padding: 3px 3px 3px 3px
+    width: 100%
+    height: 100%
+    border-radius: $border-radius
+    border: none
+    padding: 0
+    img
+      padding: 3px 3px 3px 3px
 
 .change-currencies.disabled
   cursor: not-allowed
