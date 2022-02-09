@@ -1,5 +1,6 @@
 import currencies, { blankCurrencyObject } from "@/assets/currencies";
 import { urls } from "@/assets/utils.js";
+import { colors } from "@/assets/utils.js";
 
 export default {
   state: {
@@ -16,6 +17,20 @@ export default {
     },
     portfolioData(state) {
       return state.portfolioData;
+    },
+    doughnutChartData(state, { portfolio, portfolioData }) {
+      const X = [];
+      const Y = [];
+
+      for (const cur of portfolio) {
+        if (!portfolioData[cur.apiId]) continue;
+
+        const usd = portfolioData[cur.apiId].market_data.current_price.usd;
+        X.push(cur.label);
+        Y.push(cur.value * usd);
+      }
+
+      return { X, Y, colors };
     },
   },
   actions: {

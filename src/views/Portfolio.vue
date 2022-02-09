@@ -56,7 +56,6 @@
 import { mapActions, mapGetters } from "vuex";
 import DoughnutChart from "@/components/DoughnutChart.vue";
 import PortfolioEntry from "@/components/PortfolioEntry.vue";
-import { colors } from "@/assets/utils.js";
 import Loader from "@/components/Loader.vue";
 import CardWithHead from "@/components/CardWithHead.vue";
 
@@ -71,7 +70,7 @@ export default {
     CardWithHead,
   },
   computed: {
-    ...mapGetters(["portfolio", "portfolioData"]),
+    ...mapGetters(["portfolio", "portfolioData", "doughnutChartData"]),
     isPortfolioEmpty() {
       if (!this.portfolio) return true;
 
@@ -94,21 +93,6 @@ export default {
           maximumFractionDigits: 2,
         }) + " $"
       );
-    },
-    doughnutChartData() {
-      const X = [];
-      const Y = [];
-
-      for (const cur of this.portfolio) {
-        if (!this.portfolioData[cur.apiId]) continue;
-        if (!cur.value) return null;
-
-        const usd = this.portfolioData[cur.apiId].market_data.current_price.usd;
-        X.push(cur.label);
-        Y.push(cur.value * usd);
-      }
-
-      return { X, Y, colors };
     },
   },
   methods: {
