@@ -1,11 +1,5 @@
 import currencies, { blankCurrencyObject } from "@/assets/currencies";
-
-const priceUrl = (apiId, vsCurrencyId) =>
-  `https://api.coingecko.com/api/v3/simple/price?ids=${apiId}&vs_currencies=${vsCurrencyId}`;
-const chartUrl = (apiId, vsCurrencyId) =>
-  `https://api.coingecko.com/api/v3/coins/${apiId}/market_chart?vs_currency=${vsCurrencyId}&days=14`;
-const portfolioDataUrl = (apiId) =>
-  `https://api.coingecko.com/api/v3/coins/${apiId}?tickers=false&community_data=false&developer_data=false&sparkline=true`;
+import { urls } from "@/assets/utils.js";
 
 export default {
   state: {
@@ -14,7 +8,6 @@ export default {
     baseCurrency: currencies[0],
     counterCurrency: currencies[1],
     baseValue: 1,
-    exchangeRate: 1,
     portfolio: currencies
       .filter((c) => c.apiId)
       .map((c) => {
@@ -24,12 +17,8 @@ export default {
   },
   getters: {
     getChartData(state) {
-      if (!state.chart) {
+      if (!state.chart || !state.chart.prices) {
         console.warn("state.chart hasn't been loaded!");
-        return null;
-      }
-      if (!state.chart.prices) {
-        console.warn("state.chart.prices hasn't been loaded!");
         return null;
       }
 
@@ -59,7 +48,9 @@ export default {
       ];
     },
     exchangeRate(state) {
-      return state.exchangeRate;
+      if (!state.chart || !state.chart.prices) return 1;
+
+      return state.chart.prices[state.chart.prices.length - 1][1];
     },
     baseValue(state) {
       return Math.round(state.baseValue * 10000000) / 10000000;
@@ -83,14 +74,11 @@ export default {
     async fetchChart({ commit, getters: { baseCurrency, counterCurrency } }) {
       try {
         const res = await fetch(
-          chartUrl(baseCurrency.apiId, counterCurrency.vsCurrencyId)
+          urls.chart(baseCurrency.apiId, counterCurrency.vsCurrencyId)
         );
         const chart = await res.json();
 
         commit("updateChart", chart);
-
-        const prices = chart.prices;
-        commit("updateExchangeRate", prices[prices.length - 1][1]);
       } catch (err) {
         console.error("Couldn't fetch chart from api:");
         console.error(err);
@@ -105,14 +93,14 @@ export default {
       return await Promise.all(promises);
     },
     async fetchPortfolioEntry({ commit }, currency) {
-      const res = await fetch(portfolioDataUrl(currency.apiId));
+      const res = await fetch(urls.portfolioData(currency.apiId));
       const data = await res.json();
       commit("updatePortfolioEntry", data);
     },
     async selectBaseCurrency({ commit, dispatch, getters }, currency) {
       const oldBaseCurrency = getters.baseCurrency;
 
-      fetch(priceUrl(oldBaseCurrency.apiId, currency.vsCurrencyId))
+      fetch(urls.price(oldBaseCurrency.apiId, currency.vsCurrencyId))
         .then((res) => res.json())
         .then((json) => {
           const rate = json[oldBaseCurrency.apiId][currency.vsCurrencyId];
@@ -132,7 +120,7 @@ export default {
     },
     async selectCounterCurrency({ commit, dispatch }, currency) {
       commit("updateCounterCurrency", currency);
-      dispatch("fetchChart");
+      await dispatch("fetchChart");
     },
     async switchCurrencies({
       commit,
@@ -141,13 +129,11 @@ export default {
     }) {
       if (!baseCurrency.vsCurrencyId || !counterCurrency.apiId) return;
 
-      const [base, coun] = [baseCurrency, counterCurrency];
-      commit("updateBaseCurrency", coun);
-      commit("updateCounterCurrency", base);
+      const oldBaseCurrency = baseCurrency;
+      commit("updateBaseCurrency", counterCurrency);
+      commit("updateCounterCurrency", oldBaseCurrency);
 
       dispatch("fetchChart");
-
-      dispatch;
     },
 
     updateCounterValue({ commit, getters }, value) {
@@ -185,9 +171,6 @@ export default {
     },
     updateBaseValue(state, value) {
       state.baseValue = value;
-    },
-    updateExchangeRate(state, rate) {
-      state.exchangeRate = rate;
     },
     updatePortfolio(state, portfolio) {
       state.portfolio = portfolio;
