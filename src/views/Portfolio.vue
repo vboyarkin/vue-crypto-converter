@@ -17,57 +17,26 @@
       </CardWithHead>
     </div>
 
-    <table>
-      <thead>
-        <tr>
-          <th colspan="2">
-            <span class="name">Монета</span>
-          </th>
-          <th>
-            <span>Активы</span>
-          </th>
-          <th class="center">
-            <span>Цена</span>
-          </th>
-          <th class="center">
-            <span>24 ч</span>
-          </th>
-          <th class="center">
-            <span>7 д</span>
-          </th>
-          <th>
-            <span>Рыночная кап-ция</span>
-          </th>
-          <th><span>Цена за последние 7 дней</span></th>
-        </tr>
-      </thead>
-
-      <PortfolioEntry
-        v-for="(currency, i) of portfolio"
-        :key="i"
-        :currency="currency"
-        :coinData="portfolioData[currency.apiId]"
-      />
-    </table>
+    <PortfolioTable />
   </div>
 </template>
 
 <script>
 import { mapActions, mapGetters } from "vuex";
 import DoughnutChart from "@/components/DoughnutChart.vue";
-import PortfolioEntry from "@/components/PortfolioEntry.vue";
 import Loader from "@/components/Loader.vue";
 import CardWithHead from "@/components/CardWithHead.vue";
+import PortfolioTable from "../components/PortfolioTable.vue";
 
 export default {
   data() {
     return { isLoadingPortfolioData: true };
   },
   components: {
-    PortfolioEntry,
     DoughnutChart,
     Loader,
     CardWithHead,
+    PortfolioTable,
   },
   computed: {
     ...mapGetters(["portfolio", "portfolioData", "doughnutChartData"]),
