@@ -2,6 +2,8 @@
 
 ![Task](/img/task.jpg)
 
+[Live demo](https://vboyarkin.github.io/vue-crypto-converter/)
+
 ## Project setup
 
 ```
